@@ -17,9 +17,9 @@ type Record struct {
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
 	args := []interface{}{
-		api.APIUsername,
-		api.APIPassword,
-		"",
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
 		domain,
 		subdomain,
 	}

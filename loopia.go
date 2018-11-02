@@ -9,9 +9,10 @@ const APIURL string = "https://api.loopia.se/RPCSERV"
 
 // API Struct to store runtime info
 type API struct {
-	APIUsername string
-	APIPassword string
+	Username string
+	Password string
 	RCPEndpoint string
+	CustomerNumber string
 }
 
 // XMLRPCClient to interact with Loopia XMLRPC
@@ -26,8 +27,9 @@ func New(username string, password string) (*API, error) {
 		RCPEndpoint: APIURL,
 	}
 
-	api.APIUsername = username
-	api.APIPassword = password
+	api.Username = username
+	api.Password = password
+	api.CustomerNumber = ""
 
 	return api, nil
 }
