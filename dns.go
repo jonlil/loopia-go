@@ -22,7 +22,7 @@ func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error
         subdomain,
     }
 
-    if err := api.XmlRpcClient().Call("getZoneRecords", args, &result); err != nil {
+    if err := api.XMLRPCClient().Call("getZoneRecords", args, &result); err != nil {
       return []Record{}, err
     }
 
