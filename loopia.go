@@ -10,7 +10,6 @@ type API struct {
     APIUsername string
     APIPassword string
     RCPEndpoint string
-    xmlrpc *xmlrpc.Client
 }
 
 func (api *API) XmlRpcClient() *xmlrpc.Client {
