@@ -32,16 +32,16 @@ func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error
 }
 
 // GetZoneRecord - fetch specific zone record
-func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (Record, error) {
+func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Record, error) {
     results, err := api.GetZoneRecords(domain, subdomain)
     if err != nil {
-        return Record{}, err
+        return &Record{}, err
     }
 
     for _, element := range results {
         if id == element.ID {
-            return element, nil
+            return &element, nil
         }
     }
-    return Record{}, errors.New("ID Not found")
+    return &Record{}, errors.New("ID Not found")
 }
