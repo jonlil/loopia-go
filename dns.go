@@ -19,6 +19,28 @@ type Status struct {
 	Cause string
 }
 
+// AddSubdomain - method for creating subdomain
+func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
+	var result string
+	args := []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+		domain,
+		subdomain,
+	}
+	if err := api.XMLRPCClient().Call("addSubdomain", args, &result); err != nil || result != "OK" {
+		return &Status{
+			Status: "failed",
+			Cause: result,
+		}, err
+	}
+
+	return &Status{
+		Status: "success",
+	}, nil
+}
+
 // GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
