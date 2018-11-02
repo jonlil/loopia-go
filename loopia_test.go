@@ -1,7 +1,6 @@
 package loopia
 
 import (
-  "fmt"
   "net/http"
   "net/http/httptest"
   "testing"
@@ -40,8 +39,7 @@ func TestClient_Credentials(t *testing.T) {
         assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
         body, err := ioutil.ReadAll(r.Body)
         if err != nil {
-            fmt.Println(err)
-            return
+            t.Error("Unexpected error when reading response Body")
         }
         assert.Contains(t, string(body[:]), "<value><string>loopia@loopiaapi</string></value>", "Expected username inside XML body")
         assert.Contains(t, string(body[:]), "<value><string>verysecret</string></value>", "Expected password inside XML body")
