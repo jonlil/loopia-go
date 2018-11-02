@@ -13,6 +13,12 @@ type Record struct {
 	Priority int    `xmlrpc:"priority"`
 }
 
+// Status - operation status wrapper
+type Status struct {
+	Status string
+	Cause string
+}
+
 // GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
