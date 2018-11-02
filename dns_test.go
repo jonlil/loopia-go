@@ -20,5 +20,5 @@ func TestClient_GetZoneRecord(t *testing.T) {
         fmt.Fprintf(w, string(byteArray[:]))
     })
     record, _ := client.GetZoneRecord("example.com", "@", 14096733)
-    assert.Equal(t, int64(14096733), record.Id)
+    assert.Equal(t, int64(14096733), record.ID)
 }

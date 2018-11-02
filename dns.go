@@ -4,14 +4,16 @@ import (
     "errors"
 )
 
+// Record descired Loopia record_obj
 type Record struct {
-    Id int64 `xmlrpc:"record_id"`
-    Ttl int `xmlrpc:"ttl"`
+    ID int64 `xmlrpc:"record_id"`
+    TTL int `xmlrpc:"ttl"`
     Type string `xmlrpc:"type"`
     Value string `xmlrpc:"rdata"`
     Priority int `xmlrpc:"priority"`
 }
 
+// GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
     result := []Record{}
     args := []interface{}{
@@ -29,6 +31,7 @@ func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error
     return result, nil
 }
 
+// GetZoneRecord - fetch specific zone record
 func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (Record, error) {
     results, err := api.GetZoneRecords(domain, subdomain)
     if err != nil {
@@ -36,7 +39,7 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (Record
     }
 
     for _, element := range results {
-        if id == element.Id {
+        if id == element.ID {
             return element, nil
         }
     }
