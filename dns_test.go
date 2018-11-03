@@ -62,3 +62,17 @@ func TestClient_GetSubdomains(t *testing.T) {
 	result, _ := client.GetSubdomains("example.com")
 	assert.Equal(t, 8, len(result), "Expected result to have 8 items")
 }
+
+func TestClient_GetSubdomain(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+		byteArray, _ := ioutil.ReadFile("fixtures/subdomains.xml")
+		fmt.Fprintf(w, string(byteArray[:]))
+	})
+
+	result, _ := client.GetSubdomain("example.com", "www")
+	assert.Equal(t, "www", result.Name, "Expected result equal www")
+}

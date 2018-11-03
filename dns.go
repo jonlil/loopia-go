@@ -70,6 +70,20 @@ func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
 	return subdomains, nil
 }
 
+// GetSubdomain ...
+func (api *API) GetSubdomain(domain string, subdomain string) (*Subdomain, error) {
+	results, err := api.GetSubdomains(domain)
+	if err != nil {
+		return &Subdomain{}, err
+	}
+	for _, element := range results {
+		if subdomain == element.Name {
+			return &element, nil
+		}
+	}
+	return &Subdomain{}, errors.New("ID Not found")
+}
+
 // GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
