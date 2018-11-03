@@ -48,3 +48,17 @@ func TestClient_AddSubdomain_AUTH_ERROR(t *testing.T) {
 	assert.Equal(t, "failed", result.Status)
 	assert.Equal(t, "AUTH_ERROR", result.Cause)
 }
+
+func TestClient_GetSubdomains(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+		byteArray, _ := ioutil.ReadFile("fixtures/subdomains.xml")
+		fmt.Fprintf(w, string(byteArray[:]))
+	})
+
+	result, _ := client.GetSubdomains("example.com")
+	assert.Equal(t, 8, len(result), "Expected result to have 8 items")
+}
