@@ -9,9 +9,9 @@ const APIURL string = "https://api.loopia.se/RPCSERV"
 
 // API Struct to store runtime info
 type API struct {
-	Username string
-	Password string
-	RCPEndpoint string
+	Username       string
+	Password       string
+	RCPEndpoint    string
 	CustomerNumber string
 }
 

@@ -16,7 +16,12 @@ type Record struct {
 // Status - operation status wrapper
 type Status struct {
 	Status string
-	Cause string
+	Cause  string
+}
+
+// Subdomain ...
+type Subdomain struct {
+	Name string
 }
 
 // AddSubdomain - method for creating subdomain
@@ -32,13 +37,37 @@ func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 	if err := api.XMLRPCClient().Call("addSubdomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
-			Cause: result,
+			Cause:  result,
 		}, err
 	}
 
 	return &Status{
 		Status: "success",
 	}, nil
+}
+
+// GetSubdomains - Method for fetching all subdomains
+func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
+	result := []string{}
+	args := []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+		domain,
+	}
+
+	if err := api.XMLRPCClient().Call("getSubdomains", args, &result); err != nil {
+		return []Subdomain{}, err
+	}
+
+	subdomains := []Subdomain{}
+	for _, value := range result {
+		subdomains = append(subdomains, Subdomain{
+			Name: value,
+		})
+	}
+
+	return subdomains, nil
 }
 
 // GetZoneRecords - fetch subdomains records
