@@ -16,7 +16,7 @@ type Record struct {
 // Status - operation status wrapper
 type Status struct {
 	Status string
-	Cause string
+	Cause  string
 }
 
 // Subdomain ...
@@ -37,7 +37,7 @@ func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 	if err := api.XMLRPCClient().Call("addSubdomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
-			Cause: result,
+			Cause:  result,
 		}, err
 	}
 
@@ -61,7 +61,7 @@ func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
 	}
 
 	subdomains := []Subdomain{}
-	for _,value := range result {
+	for _, value := range result {
 		subdomains = append(subdomains, Subdomain{
 			Name: value,
 		})
