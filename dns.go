@@ -153,3 +153,27 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Recor
 	}
 	return &Record{}, errors.New("ID Not found")
 }
+
+// UpdateZoneRecord -
+func (api *API) UpdateZoneRecord(domain string, subdomain string, record Record) (*Status, error) {
+	var result string
+	args := []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+		domain,
+		subdomain,
+		record,
+	}
+
+	if err := api.XMLRPCClient().Call("updateZoneRecord", args, &result); err != nil || result != "OK" {
+		return &Status{
+			Status: "failed",
+			Cause:  result,
+		}, err
+	}
+
+	return &Status{
+		Status: "success",
+	}, nil
+}

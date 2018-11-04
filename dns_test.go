@@ -114,3 +114,35 @@ func TestClient_AddZoneRecord(t *testing.T) {
 
 	assert.Equal(t, int64(14096733), record.ID, "AddZoneRecord expects to find ID")
 }
+
+func TestClient_UpdateZoneRecord(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Error("Unexpected error when reading response Body")
+		}
+
+		assert.Contains(t,
+			string(body[:]),
+			"<member><name>record_id</name><value><int>14096733</int></value></member>",
+			"ID should be converted to record_id")
+
+		byteArray, _ := ioutil.ReadFile("fixtures/ok.xml")
+		fmt.Fprintf(w, string(byteArray[:]))
+	})
+
+	result, err := client.UpdateZoneRecord("example.com", "api", Record{
+		ID:       14096733,
+		TTL:      300,
+		Type:     "A",
+		Value:    "1.1.1.1",
+		Priority: 0,
+	})
+
+	assert.Equal(t, nil, err, "err should be nil")
+	assert.Equal(t, "success", result.Status)
+}
