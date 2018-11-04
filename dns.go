@@ -46,6 +46,43 @@ func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 	}, nil
 }
 
+// AddZoneRecord - Create zone record
+func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) error {
+	var result string
+	args := []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+		domain,
+		subdomain,
+		record,
+	}
+	if err := api.XMLRPCClient().Call("addZoneRecord", args, &result); err != nil || result != "OK" {
+		return err
+	}
+
+	// Try figuring out ID of our new zoneRecord.
+	// Loopia does not return any kind of identification on the created object.
+	results, err := api.GetZoneRecords(domain, subdomain)
+	if err != nil {
+		return err
+	}
+
+	for _, element := range results {
+		// Exclude ID before equality check
+		id := element.ID
+		element.ID = 0
+
+		// Compare by value
+		if element == *record {
+			// Found our new record, assigning ID
+			record.ID = id
+			return nil
+		}
+	}
+	return errors.New("Record saved but unable to query for ID")
+}
+
 // GetSubdomains - Method for fetching all subdomains
 func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
 	result := []string{}

@@ -7,17 +7,34 @@ import (
 
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"strings"
 )
+
+func zoneRecordsHandler(t *testing.T) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Error("Unexpected error when reading response Body")
+		}
+
+		strBody := string(body[:])
+		if strings.Contains(strBody, "getZoneRecords") {
+			byteArray, _ := ioutil.ReadFile("fixtures/zone_records.xml")
+			fmt.Fprintf(w, string(byteArray[:]))
+		} else if strings.Contains(strBody, "addZoneRecord") {
+			byteArray, _ := ioutil.ReadFile("fixtures/ok.xml")
+			fmt.Fprintf(w, string(byteArray[:]))
+		}
+	}
+}
 
 func TestClient_GetZoneRecord(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
-		byteArray, _ := ioutil.ReadFile("fixtures/zone_records.xml")
-		fmt.Fprintf(w, string(byteArray[:]))
-	})
+	mux.HandleFunc("/", zoneRecordsHandler(t))
 	record, _ := client.GetZoneRecord("example.com", "@", 14096733)
 	assert.Equal(t, int64(14096733), record.ID)
 }
@@ -75,4 +92,25 @@ func TestClient_GetSubdomain(t *testing.T) {
 
 	result, _ := client.GetSubdomain("example.com", "www")
 	assert.Equal(t, "www", result.Name, "Expected result equal www")
+}
+
+func TestClient_AddZoneRecord(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", zoneRecordsHandler(t))
+
+	record := Record{
+		TTL:      300,
+		Type:     "A",
+		Value:    "1.1.1.1",
+		Priority: 0,
+	}
+
+	err := client.AddZoneRecord("example.com", "api", &record)
+	if err != nil {
+		t.Error(err)
+	}
+
+	assert.Equal(t, int64(14096733), record.ID, "AddZoneRecord expects to find ID")
 }
