@@ -154,6 +154,30 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Recor
 	return &Record{}, errors.New("ID Not found")
 }
 
+// RemoveZoneRecord - remove zone record
+func (api *API) RemoveZoneRecord(domain string, subdomain string, id int64) (*Status, error) {
+	var result string
+	args := []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+		domain,
+		subdomain,
+		id,
+	}
+
+	if err := api.XMLRPCClient().Call("removeZoneRecord", args, &result); err != nil {
+		return &Status{
+			Status: "failed",
+			Cause:  result,
+		}, err
+	}
+
+	return &Status{
+		Status: "success",
+	}, nil
+}
+
 // UpdateZoneRecord -
 func (api *API) UpdateZoneRecord(domain string, subdomain string, record Record) (*Status, error) {
 	var result string
