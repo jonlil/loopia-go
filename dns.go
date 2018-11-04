@@ -147,14 +147,11 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Recor
 // RemoveZoneRecord - remove zone record
 func (api *API) RemoveZoneRecord(domain string, subdomain string, id int64) (*Status, error) {
 	var result string
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
 		subdomain,
 		id,
-	}
+	}...)
 
 	if err := api.XMLRPCClient().Call("removeZoneRecord", args, &result); err != nil {
 		return &Status{
