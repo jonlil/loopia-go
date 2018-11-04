@@ -21,6 +21,14 @@ func (api *API) XMLRPCClient() *xmlrpc.Client {
 	return client
 }
 
+func (api *API) getAuthenticationArgs() []interface{} {
+	return []interface{}{
+		api.Username,
+		api.Password,
+		api.CustomerNumber,
+	}
+}
+
 // New returns a loopia.API instance
 func New(username string, password string) (*API, error) {
 	api := &API{

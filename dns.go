@@ -124,13 +124,10 @@ func (api *API) GetSubdomain(domain string, subdomain string) (*Subdomain, error
 // GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
 		subdomain,
-	}
+	}...)
 
 	if err := api.XMLRPCClient().Call("getZoneRecords", args, &result); err != nil {
 		return []Record{}, err
