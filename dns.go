@@ -61,6 +61,8 @@ func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) e
 		return err
 	}
 
+	// Try figuring out ID of our new zoneRecord.
+	// Loopia does not return any kind of identification on the created object.
 	results, err := api.GetZoneRecords(domain, subdomain)
 	if err != nil {
 		return err
