@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"strings"
+	"fmt"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -41,8 +43,16 @@ func TestClient_Credentials(t *testing.T) {
 		if err != nil {
 			t.Error("Unexpected error when reading response Body")
 		}
-		assert.Contains(t, string(body[:]), "<value><string>loopia@loopiaapi</string></value>", "Expected username inside XML body")
-		assert.Contains(t, string(body[:]), "<value><string>verysecret</string></value>", "Expected password inside XML body")
+
+		xmlParamPattern := "<param><value>%s</value></param>"
+		search := []string {
+			fmt.Sprintf(xmlParamPattern, "<string>loopia@loopiaapi</string>"),
+			fmt.Sprintf(xmlParamPattern, "<string>verysecret</string>"),
+			fmt.Sprintf(xmlParamPattern, "<string></string>"),
+			fmt.Sprintf(xmlParamPattern, "<string>example.com</string>"),
+			fmt.Sprintf(xmlParamPattern, "<string>www</string>"),
+		}
+		assert.Contains(t, string(body[:]), strings.Join(search, ""), "Expected username inside XML body")
 	})
 	client.GetZoneRecord("example.com", "www", 12345)
 	teardown()
