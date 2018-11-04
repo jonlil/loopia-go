@@ -27,13 +27,11 @@ type Subdomain struct {
 // AddSubdomain - method for creating subdomain
 func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 	var result string
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
 		subdomain,
-	}
+	}...)
+
 	if err := api.XMLRPCClient().Call("addSubdomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
@@ -49,14 +47,12 @@ func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 // AddZoneRecord - Create zone record
 func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) error {
 	var result string
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
 		subdomain,
 		record,
-	}
+	}...)
+
 	if err := api.XMLRPCClient().Call("addZoneRecord", args, &result); err != nil || result != "OK" {
 		return err
 	}
@@ -86,12 +82,9 @@ func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) e
 // GetSubdomains - Method for fetching all subdomains
 func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
 	result := []string{}
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
-	}
+	}...)
 
 	if err := api.XMLRPCClient().Call("getSubdomains", args, &result); err != nil {
 		return []Subdomain{}, err
@@ -154,14 +147,11 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Recor
 // UpdateZoneRecord -
 func (api *API) UpdateZoneRecord(domain string, subdomain string, record Record) (*Status, error) {
 	var result string
-	args := []interface{}{
-		api.Username,
-		api.Password,
-		api.CustomerNumber,
+	args := append(api.getAuthenticationArgs(), []interface{}{
 		domain,
 		subdomain,
 		record,
-	}
+	}...)
 
 	if err := api.XMLRPCClient().Call("updateZoneRecord", args, &result); err != nil || result != "OK" {
 		return &Status{
