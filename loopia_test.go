@@ -28,7 +28,7 @@ func setup() {
 	server = httptest.NewServer(mux)
 
 	client, _ = New("loopia@loopiaapi", "verysecret")
-	client.RCPEndpoint = server.URL
+	client.RPCEndpoint = server.URL
 }
 
 func teardown() {

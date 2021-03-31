@@ -11,13 +11,13 @@ const APIURL string = "https://api.loopia.se/RPCSERV"
 type API struct {
 	Username       string
 	Password       string
-	RCPEndpoint    string
+	RPCEndpoint    string
 	CustomerNumber string
 }
 
 // XMLRPCClient to interact with Loopia XMLRPC
 func (api *API) XMLRPCClient() *xmlrpc.Client {
-	client, _ := xmlrpc.NewClient(api.RCPEndpoint, nil)
+	client, _ := xmlrpc.NewClient(api.RPCEndpoint, nil)
 	return client
 }
 
@@ -31,13 +31,10 @@ func (api *API) getAuthenticationArgs() []interface{} {
 
 // New returns a loopia.API instance
 func New(username string, password string) (*API, error) {
-	api := &API{
-		RCPEndpoint: APIURL,
-	}
-
-	api.Username = username
-	api.Password = password
-	api.CustomerNumber = ""
-
-	return api, nil
+	return &API{
+		RPCEndpoint: APIURL,
+		Username: username,
+		Password: password,
+		CustomerNumber: "",
+	}, nil
 }
