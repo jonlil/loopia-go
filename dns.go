@@ -27,12 +27,12 @@ type Subdomain struct {
 // AddSubdomain - method for creating subdomain
 func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 	var result string
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
 		subdomain,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("addSubdomain", args, &result); err != nil || result != "OK" {
+	if err := api.Call("addSubdomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
 			Cause:  result,
@@ -47,13 +47,13 @@ func (api *API) AddSubdomain(domain string, subdomain string) (*Status, error) {
 // AddZoneRecord - Create zone record
 func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) error {
 	var result string
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
 		subdomain,
 		record,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("addZoneRecord", args, &result); err != nil || result != "OK" {
+	if err := api.Call("addZoneRecord", args, &result); err != nil || result != "OK" {
 		return err
 	}
 
@@ -82,11 +82,11 @@ func (api *API) AddZoneRecord(domain string, subdomain string, record *Record) e
 // GetSubdomains - Method for fetching all subdomains
 func (api *API) GetSubdomains(domain string) ([]Subdomain, error) {
 	result := []string{}
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("getSubdomains", args, &result); err != nil {
+	if err := api.Call("getSubdomains", args, &result); err != nil {
 		return []Subdomain{}, err
 	}
 
@@ -117,12 +117,12 @@ func (api *API) GetSubdomain(domain string, subdomain string) (*Subdomain, error
 // GetZoneRecords - fetch subdomains records
 func (api *API) GetZoneRecords(domain string, subdomain string) ([]Record, error) {
 	result := []Record{}
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
 		subdomain,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("getZoneRecords", args, &result); err != nil {
+	if err := api.Call("getZoneRecords", args, &result); err != nil {
 		return []Record{}, err
 	}
 
@@ -147,13 +147,13 @@ func (api *API) GetZoneRecord(domain string, subdomain string, id int64) (*Recor
 // RemoveZoneRecord - remove zone record
 func (api *API) RemoveZoneRecord(domain string, subdomain string, id int64) (*Status, error) {
 	var result string
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
 		subdomain,
 		id,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("removeZoneRecord", args, &result); err != nil {
+	if err := api.Call("removeZoneRecord", args, &result); err != nil {
 		return &Status{
 			Status: "failed",
 			Cause:  result,
@@ -168,13 +168,33 @@ func (api *API) RemoveZoneRecord(domain string, subdomain string, id int64) (*St
 // UpdateZoneRecord -
 func (api *API) UpdateZoneRecord(domain string, subdomain string, record Record) (*Status, error) {
 	var result string
-	args := append(api.getAuthenticationArgs(), []interface{}{
+	args := []interface{}{
 		domain,
 		subdomain,
 		record,
-	}...)
+	}
 
-	if err := api.XMLRPCClient().Call("updateZoneRecord", args, &result); err != nil || result != "OK" {
+	if err := api.Call("updateZoneRecord", args, &result); err != nil || result != "OK" {
+		return &Status{
+			Status: "failed",
+			Cause:  result,
+		}, err
+	}
+
+	return &Status{
+		Status: "success",
+	}, nil
+}
+
+// RemoveSubDomain - Removes a subdomain
+func (api *API) RemoveSubDomain(domain string, subdomain string) (*Status, error) {
+	var result string
+	args := []interface{}{
+		domain,
+		subdomain,
+	}
+
+	if err := api.Call("removeSubDomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
 			Cause:  result,

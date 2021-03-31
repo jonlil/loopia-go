@@ -174,3 +174,29 @@ func TestClient_UpdateZoneRecord(t *testing.T) {
 	assert.Equal(t, nil, err, "err should be nil")
 	assert.Equal(t, "success", result.Status)
 }
+
+func TestClient_RemoveSubDomain(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Error("Unexpected error when reading response Body")
+		}
+
+		search := []string{
+			"<param><value><string>example.com</string></value></param>",
+			"<param><value><string>api</string></value></param>",
+		}
+		assert.Contains(t, string(body[:]), strings.Join(search[:], ""), "Parameters should be in exact order")
+
+		byteArray, _ := ioutil.ReadFile("fixtures/ok.xml")
+		fmt.Fprintf(w, string(byteArray[:]))
+	})
+
+	result, err := client.RemoveSubDomain("example.com", "api")
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "success", result.Status)
+}
