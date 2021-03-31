@@ -29,6 +29,14 @@ func (api *API) getAuthenticationArgs() []interface{} {
 	}
 }
 
+func (api *API) Call(serviceMethod string, args []interface{}, reply interface{}) error {
+	return api.XMLRPCClient().Call(
+		serviceMethod,
+		append(api.getAuthenticationArgs(), args...),
+		reply,
+	)
+}
+
 // New returns a loopia.API instance
 func New(username string, password string) (*API, error) {
 	return &API{
