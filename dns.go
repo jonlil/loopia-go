@@ -185,3 +185,23 @@ func (api *API) UpdateZoneRecord(domain string, subdomain string, record Record)
 		Status: "success",
 	}, nil
 }
+
+// RemoveSubDomain - Removes a subdomain
+func (api *API) RemoveSubDomain(domain string, subdomain string) (*Status, error) {
+	var result string
+	args := append(api.getAuthenticationArgs(), []interface{}{
+		domain,
+		subdomain,
+	}...)
+
+	if err := api.XMLRPCClient().Call("removeSubdomain", args, &result); err != nil || result != "OK" {
+		return &Status{
+			Status: "failed",
+			Cause:  result,
+		}, err
+	}
+
+	return &Status{
+		Status: "success",
+	}, nil
+}
