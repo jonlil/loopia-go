@@ -194,7 +194,7 @@ func (api *API) RemoveSubDomain(domain string, subdomain string) (*Status, error
 		subdomain,
 	}
 
-	if err := api.Call("removeSubDomain", args, &result); err != nil || result != "OK" {
+	if err := api.Call("removeSubdomain", args, &result); err != nil || result != "OK" {
 		return &Status{
 			Status: "failed",
 			Cause:  result,
